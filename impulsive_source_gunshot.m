@@ -63,6 +63,22 @@ p=0.4;
 %vector containing 1 if we keep the part of the curve and 0 otherwise
 AMP=[1.*(amp_1>M*p);1.*(amp_2>M*p);1.*(amp_3>M*p);1.*(amp_4>M*p)]; 
 
+%%% plot %%%
+figure
+hold on 
+for i=1:4
+    plot(AMP(i,:).*T(i,:),freq_1,'bo')
+end
+xlim([0.2 0.8])
+ylim([0,fs/2])
+xlabel('Times (s)')
+ylabel('Frequency (Hz)')
+title('Values of tnapp and estimated dispersion curves')
+legend('tnapp','','','')
+pause(.1)
+%%% end plot %%%
+
+
 %% Minization of the penalized problem
 %initial condition
 x0=[8700,1450,1700,1000,1600,51,5.8]; 
@@ -78,13 +94,6 @@ x=fminsearch(g,x0,options);
 fprintf('rapp=%dm\n c1app=%dm/s\n c2app=%dm/s\n rho1app=%dkg/m3\n rho2app=%dkg/m3\n Dapp=%dm\n dtapp=%ds\n',x(1),x(2),x(3),x(4),x(5),x(6),x(7))
 
 %%% plot %%%
-figure
-hold on 
-for i=1:4
-    plot(AMP(i,:).*T(i,:),freq_1,'bo')
-end
-xlim([0.2 0.8])
-ylim([0,fs/2])
 vg=pek_vgb(freq,1,4,x(2),x(3),x(4),x(5),x(6)); 
 plot(x(1)./vg-x(7), freq,'r')
 legend('tnapp','','','','approx. disp. curves')
@@ -209,6 +218,7 @@ function mode_t_app=filtering(s_t,time,fs,NFFT,nbmode)
         xlabel('Times (s)')
         ylabel('Frequency (Hz)')
         title('Unwarped spectrogram')
+        pause(.1)
         %%%%%%%%%%%%
         %%% end plot %%% 
         %%%%%%%%%%%%

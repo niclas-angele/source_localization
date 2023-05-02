@@ -19,9 +19,9 @@ load pekeris_model_tool.mat
 % %% Artifical noise on data
 %signal length
 N=length(s_t);
-
+%parameters of the noise 
 Tdelta=0.01; 
-delta=0; 
+delta=0.001; 
 % creation of the Gaussian process W
 time=(-N:N-1)/fs;
 Y=randn(1,2*N); 
@@ -76,6 +76,24 @@ p=0.4;
 %vector containing 1 if we keep the part of the curve and 0 otherwise
 AMP=[1.*(amp_1>M*p);1.*(amp_2>M*p);1.*(amp_3>M*p);1.*(amp_4>M*p)]; 
 
+%%% plot %%%
+figure
+hold on 
+for i=1:4
+    plot(AMP(i,:).*T(i,:),freq_1,'bo')
+end
+vg=pek_vgb(freq,1,4,1500,1600,1000,1500,100); 
+plot(10000./vg, freq,'k')
+xlim_plots=[6.6 7];
+xlim(xlim_plots)
+ylim([0,100])
+xlabel('Times (s)')
+ylabel('Frequency (Hz)')
+title('Values of tnapp and estimated dispersion curves')
+pause(.1)
+%%% end plot %%%
+
+
 %% Minization of the penalized problem
 %initial condition
 x0=[r,1500,1600,1000,1500,100,0]; 
@@ -91,16 +109,6 @@ x=fminsearch(g,[r,1500,1600,1000,1500,100,0],options);
 fprintf('rapp=%dm\n c1app=%dm/s\n c2app=%dm/s\n rho1app=%dkg/m3\n rho2app=%dkg/m3\n Dapp=%dm\n dtapp=%ds\n',x(1),x(2),x(3),x(4),x(5),x(6),x(7))
 
 %%% plot %%%
-figure
-hold on 
-for i=1:4
-    plot(AMP(i,:).*T(i,:),freq_1,'bo')
-end
-vg=pek_vgb(freq,1,4,1500,1600,1000,1500,100); 
-plot(10000./vg, freq,'k')
-xlim_plots=[6.6 7];
-xlim(xlim_plots)
-ylim([0,100])
 vg=pek_vgb(freq,1,4,x(2),x(3),x(4),x(5),x(6)); 
 plot(x(1)./vg-x(7), freq,'r')
 legend('tnapp','','','','exact disp. curves','','','','approx. disp. curves')
@@ -228,6 +236,7 @@ function mode_t_app=filtering(s_t,time,fs,NFFT,nbmode)
         vg=pek_vgb(freq,5-nb,5-nb,1500,1600,1000,1500,100);
         hold on 
         plot(10000./vg, freq,'k')
+        pause(.1)
         %%%%%%%%%%%%
         %%% end plot %%% 
         %%%%%%%%%%%%
@@ -252,6 +261,7 @@ function mode_t_app=filtering(s_t,time,fs,NFFT,nbmode)
     vg=pek_vgb(freq,1,1,1500,1600,1000,1500,100);
     hold on 
     plot(10000./vg, freq,'k')
+    pause(.1)
     %%%%%%%%%%%%
     %%% end plot %%% 
     %%%%%%%%%%%%
